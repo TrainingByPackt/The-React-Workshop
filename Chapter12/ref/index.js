@@ -1,10 +1,48 @@
 import React from "react";
+import ReactDOM from "react-dom";
 
-const Child = () => {
+class Example extends React.Component {
+  message = "message using this";
+
+  componentDidMount() {
+    console.log(this.message);
+  }
+
+  handleClick = () => {
+    console.log(this.message);
+  };
+
+  render() {
+    return <button onClick={this.handleClick}>hey</button>;
+  }
+}
+
+class IsMounted extends React.Component {
+  mounted = false;
+
+  componentDidMount() {
+    this.mounted = true;
+  }
+
+  componentWillUnmount() {
+    this.mounted = true;
+  }
+
+  handleClick = () => {
+    if (this.mounted) console.log("<Component /> is alive and well.");
+  };
+
+  render() {
+    return <button onClick={this.handleClick}>hey</button>;
+  }
+}
+
+const SafeChild = () => {
   const [counter, setCounter] = React.useState(0);
-  const mounted = React.useRef(true);
+  const mounted = React.useRef(false);
 
   React.useEffect(() => {
+    mounted.current = true;
     return () => {
       mounted.current = false;
     };
@@ -13,14 +51,9 @@ const Child = () => {
   return (
     <div>
       Child: {counter}
-      <button onClick={() => setCounter(x => x + 1)}>
-        increment instantly
-      </button>
       <button
         onClick={() => {
-          console.log(mounted);
           setTimeout(() => {
-            console.log(mounted);
             if (mounted.current) {
               setCounter(x => x + 1);
             }
@@ -33,16 +66,37 @@ const Child = () => {
   );
 };
 
-const Parent = () => {
+const Child = () => {
+  const [counter, setCounter] = React.useState(0);
+
+  return (
+    <div>
+      Child: {counter}
+      <button
+        onClick={() => {
+          setTimeout(() => {
+            setCounter(x => x + 1);
+          }, 3000);
+        }}
+      >
+        increment after 3 seconds
+      </button>
+    </div>
+  );
+};
+
+const App = () => {
   const [visible, setVisible] = React.useState(true);
 
   return (
     <>
-      Parent
-      <button onClick={() => setVisible(false)}>toggle</button>
+      <button onClick={() => setVisible(false)}>
+        {`Unmount <Child /> component`}
+      </button>
       {visible && <Child />}
     </>
   );
 };
 
-export default Parent
+const rootElement = document.getElementById("root");
+ReactDOM.render(<App />, rootElement);

@@ -1,13 +1,13 @@
-import React from "react";
+dimport React from "react";
 
-const Row = React.memo(props => {
+const Row = props => {
   return (
     <div>
       {props.name} {props.weight}kg x {props.quantity}{" "}
       <button>increase quantity</button>
     </div>
   );
-});
+};
 
 const Stock = () => {
   const [stock, setStock] = React.useState([
@@ -41,7 +41,10 @@ const Stock = () => {
           };
 
           setStock(prevStock => {
-            return [...prevStock, newItem];
+            prevStock.push(newItem);
+            Object.is(prevStock, prevStock); // true
+
+            return prevStock;
           });
         }}
       >

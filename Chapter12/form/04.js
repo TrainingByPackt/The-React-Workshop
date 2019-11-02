@@ -8,35 +8,33 @@ const validate = value => {
   }
 };
 
-const mockAPI = value =>
-  new Promise((resolve, reject) =>
-    setTimeout(() => {
-      if (validate(value)) {
-        resolve("All good.");
-      } else {
-        reject(new Error("Value's length is over 5."));
-      }
-    }, 1500)
-  );
+const clientSideValidation = value => {
+  if (validate(value)) {
+    return "All good.";
+  } else {
+    throw new Error("Value's length is over 5.");
+  }
+};
 
 const Form = () => {
   const [value, setValue] = React.useState("");
-  const [isLoading, setLoading] = React.useState(false);
+  const [error, setError] = React.useState(undefined);
+  const [success, setSuccess] = React.useState(false);
 
   return (
     <form
       onSubmit={e => {
         e.preventDefault();
 
-        setLoading(true);
+        try {
+          clientSideValidation(value);
 
-        mockAPI(value)
-          .then(_value => {
-            setLoading(false);
-          })
-          .catch(_error => {
-            setLoading(false);
-          });
+          setError(undefined);
+          setSuccess(true);
+        } catch (e) {
+          setSuccess(false);
+          setError(e.message);
+        }
       }}
     >
       <input
@@ -44,7 +42,10 @@ const Form = () => {
         onChange={e => setValue(e.target.value)}
         placeholder="give me string"
       />
-      {isLoading && <div>...</div>}
+      {error && <div style={{ color: "red" }}>{error}</div>}
+      {success && (
+        <div style={{ color: "green" }}>Your submission was successful.</div>
+      )}
       <div>
         <button type="submit">submit</button>
       </div>

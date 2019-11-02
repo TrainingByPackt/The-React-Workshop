@@ -1,6 +1,6 @@
 import React from "react";
 
-const Chat = props => (
+const Chat = () => (
   <div>
     <div>welcome user</div>
     message: <input placeholder="type your message..." />
@@ -25,7 +25,6 @@ const Messenger = () => {
             ],
             nextId: state.nextId + 1
           };
-
         case "set_typing":
           return {
             ...state,
@@ -40,7 +39,6 @@ const Messenger = () => {
               return user;
             })
           };
-
         default:
           return state;
       }
@@ -54,8 +52,19 @@ const Messenger = () => {
 
   return (
     <div style={{ display: "flex", justifyContent: "space-between" }}>
-      <Chat />
-      <Chat />
+      <Chat
+        user={state.users.find(user => user.name === "Jane")}
+        participant={state.users.find(user => user.name === "Joe")}
+        messages={state.messages}
+        dispatch={dispatch}
+      />
+
+      <Chat
+        user={state.users.find(user => user.name === "Joe")}
+        participant={state.users.find(user => user.name === "Jane")}
+        messages={state.messages}
+        dispatch={dispatch}
+      />
     </div>
   );
 };

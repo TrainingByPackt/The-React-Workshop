@@ -3,16 +3,37 @@ import React from "react";
 const Chat = props => {
   const [value, setValue] = React.useState("");
 
+  const sendMessage = () => {
+    props.dispatch({
+      type: "create_message",
+      payload: { user: props.user.name, message: value }
+    });
+
+    setValue("");
+  };
+
   return (
     <div>
-      <div>welcome {props.user.name}</div>
+      <div>{`welcome ${props.user.name}`}</div>
+      {props.messages.map(message => (
+        <div key={message.id}>
+          {message.user === props.user.name ? "you: " : `${message.user}: `}
+          {` `}
+          {message.text}
+        </div>
+      ))}
       message:{" "}
       <input
-        onChange={e => setValue(e.target.value)}
         placeholder="type your message..."
+        onChange={e => setValue(e.target.value)}
         value={value}
+        onKeyDown={e => {
+          if (e.keyCode === 13) {
+            sendMessage();
+          }
+        }}
       />
-      <button>send</button>
+      <button onClick={sendMessage}>send</button>
     </div>
   );
 };
@@ -34,7 +55,6 @@ const Messenger = () => {
             ],
             nextId: state.nextId + 1
           };
-
         case "set_typing":
           return {
             ...state,
@@ -49,7 +69,6 @@ const Messenger = () => {
               return user;
             })
           };
-
         default:
           return state;
       }
@@ -69,6 +88,7 @@ const Messenger = () => {
         messages={state.messages}
         dispatch={dispatch}
       />
+
       <Chat
         user={state.users.find(user => user.name === "Joe")}
         participant={state.users.find(user => user.name === "Jane")}

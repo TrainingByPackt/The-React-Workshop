@@ -3,9 +3,37 @@ import React from "react";
 const Chat = props => {
   const [value, setValue] = React.useState("");
 
+  React.useEffect(() => {
+    if (value !== "") {
+      props.dispatch({
+        type: "set_typing",
+        payload: { name: props.user.name, typing: true }
+      });
+
+      setTimeout(() => {
+        props.dispatch({
+          type: "set_typing",
+
+          payload: { name: props.user.name, typing: false }
+        });
+      }, 2000);
+    }
+  }, [value]);
+
+  const sendMessage = () => {
+    if (value !== "") {
+      props.dispatch({
+        type: "create_message",
+        payload: { user: props.user.name, message: value }
+      });
+
+      setValue("");
+    }
+  };
+
   return (
     <div>
-      <div>welcome {props.user.name}</div>
+      <div>{`welcome ${props.user.name}`}</div>
       {props.messages.map(message => (
         <div key={message.id}>
           {message.user === props.user.name ? "you: " : `${message.user}: `}
@@ -15,32 +43,19 @@ const Chat = props => {
       ))}
       message:{" "}
       <input
+        placeholder="type your message..."
+        onChange={e => setValue(e.target.value)}
+        value={value}
         onKeyDown={e => {
           if (e.keyCode === 13) {
-            props.dispatch({
-              type: "create_message",
-              payload: { user: props.user.name, message: value }
-            });
-
-            setValue("");
+            sendMessage();
           }
         }}
-        onChange={e => setValue(e.target.value)}
-        placeholder="type your message..."
-        value={value}
       />
-      <button
-        onClick={() => {
-          props.dispatch({
-            type: "create_message",
-            payload: { user: props.user.name, message: value }
-          });
-
-          setValue("");
-        }}
-      >
-        send
-      </button>
+      <button onClick={sendMessage}>send</button>
+      {props.participant.typing && (
+        <div>{`${props.participant.name} is typing`}</div>
+      )}
     </div>
   );
 };
@@ -62,7 +77,6 @@ const Messenger = () => {
             ],
             nextId: state.nextId + 1
           };
-
         case "set_typing":
           return {
             ...state,
@@ -77,7 +91,6 @@ const Messenger = () => {
               return user;
             })
           };
-
         default:
           return state;
       }
@@ -97,6 +110,7 @@ const Messenger = () => {
         messages={state.messages}
         dispatch={dispatch}
       />
+
       <Chat
         user={state.users.find(user => user.name === "Joe")}
         participant={state.users.find(user => user.name === "Jane")}

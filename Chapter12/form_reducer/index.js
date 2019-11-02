@@ -1,4 +1,7 @@
 import React from "react";
+import ReactDOM from "react-dom";
+
+import "./styles.css";
 
 const validate = value => {
   if (value.length <= 5) {
@@ -17,26 +20,45 @@ const clientSideValidation = value => {
 };
 
 const useForm = ({ handler }) => {
-  const [value, setValue] = React.useState("");
-  const [error, setError] = React.useState(undefined);
-  const [success, setSuccess] = React.useState(false);
+  const [state, dispatch] = React.useReducer(
+    (state, action) => {
+      switch (action.type) {
+        case "change_value":
+          return { ...state, value: action.payload.value };
+
+        case "set_error":
+          return {
+            ...state,
+            error: action.payload.error,
+            success: action.payload.error ? false : true
+          };
+
+        default:
+          return state;
+      }
+    },
+    {
+      value: "",
+      error: undefined,
+      success: false
+    }
+  );
 
   return {
-    value,
-    changeHandler: e => setValue(e.target.value),
-    error,
-    success,
+    value: state.value,
+    changeHandler: e =>
+      dispatch({ type: "change_value", payload: { value: e.target.value } }),
+    error: state.error,
+    success: state.success,
     submitHandler: e => {
       e.preventDefault();
 
       try {
-        handler(value);
+        handler(state.value);
 
-        setError(undefined);
-        setSuccess(true);
+        dispatch({ type: "set_error", payload: { error: undefined } });
       } catch (e) {
-        setSuccess(false);
-        setError(e.message);
+        dispatch({ type: "set_error", payload: { error: e.message } });
       }
     }
   };
@@ -65,4 +87,5 @@ const Form = () => {
   );
 };
 
-export default Form;
+const rootElement = document.getElementById("root");
+ReactDOM.render(<Form />, rootElement);

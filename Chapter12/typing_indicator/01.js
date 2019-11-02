@@ -1,6 +1,6 @@
 import React from "react";
 
-const Chat = props => (
+const Chat = () => (
   <div>
     <div>welcome user</div>
     message: <input placeholder="type your message..." />

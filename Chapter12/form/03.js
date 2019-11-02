@@ -8,16 +8,13 @@ const validate = value => {
   }
 };
 
-const mockAPI = value =>
-  new Promise((resolve, reject) =>
-    setTimeout(() => {
-      if (validate(value)) {
-        resolve("All good.");
-      } else {
-        reject(new Error("Value's length is over 5."));
-      }
-    }, 1500)
-  );
+const clientSideValidation = value => {
+  if (validate(value)) {
+    return "All good.";
+  } else {
+    throw new Error("Value's length is over 5.");
+  }
+};
 
 const Form = () => {
   const [value, setValue] = React.useState("");
@@ -27,9 +24,12 @@ const Form = () => {
       onSubmit={e => {
         e.preventDefault();
 
-        mockAPI(value)
-          .then(console.log)
-          .catch(x => console.log(x.message));
+        try {
+          let d = clientSideValidation(value);
+          console.log(d);
+        } catch (e) {
+          console.log(e);
+        }
       }}
     >
       <input
