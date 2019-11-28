@@ -55,7 +55,7 @@ const FormYupValidation = () => {
                    validate={validateName}
                    onChange={handleChange}/>
           </label>
-          <ErrorMessage name="name" />
+          <ErrorMessage name="name" className="error" component="span"/>
           <label>
             Password*:
             <Field type="password" name="password"
@@ -63,7 +63,7 @@ const FormYupValidation = () => {
                    validate={validatePassword}
                    onChange={handleChange}/>
           </label>
-          <ErrorMessage name="password" />
+          <ErrorMessage name="password" className="error" component="span" />
           <input type="submit" value="Login" disabled={isSubmitting}/>
         </form>
       )}

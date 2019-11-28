@@ -20,7 +20,7 @@ class ControlledForm extends React.Component {
 
   handleSubmit(event) {
     event.preventDefault();
-    alert('A name was submitted: ' + this.name.current.value);
+    alert('A name was submitted: ' + this.state.name);
   }
 
   render() {
