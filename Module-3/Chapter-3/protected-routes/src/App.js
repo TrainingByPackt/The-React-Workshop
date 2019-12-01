@@ -2,21 +2,20 @@ import React from 'react';
 import { Formik, Form, Field } from 'formik';
 import { createBrowserHistory as createHistory } from 'history';
 import { Prompt, Link, Switch, Route, BrowserRouter as Router, Redirect } from 'react-router-dom';
+import './App.css';
 
 function validateEmail(value) {
   let error;
   if (!value) {
-    error = 'Required';
-  } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(value)) {
-    error = 'Invalid email address';
+    error = 'Email is Required';
   }
   return error;
 }
 
-function validateUsername(value) {
+function validateName(value) {
   let error;
-  if (value === 'admin') {
-    error = 'Nice try!';
+  if (!value) {
+    error = 'Name is Required';
   }
   return error;
 }
@@ -70,17 +69,17 @@ export const SignupForm = () => (
     >
       {({ errors, touched, validateField, validateForm, dirty }) => (
         <Form>
+          <label>
+            Email*:
           <Field name="email" validate={validateEmail} />
+          </label>
           {errors.email && touched.email && <div>{errors.email}</div>}
 
-          <Field name="username" validate={validateUsername} />
+          <label>
+            Name*:
+          <Field name="username" validate={validateName} />
+          </label>
           {errors.username && touched.username && <div>{errors.username}</div>}
-          <button type="button" onClick={() => validateField('username')}>
-            Check Username
-          </button>
-          <button type="button" onClick={() => validateForm()}>
-            Validate All
-          </button>
           <button type="submit">Submit</button>
           <span>Form is Dirty: {dirty ? "True" : "False"}</span>
           <Prompt
