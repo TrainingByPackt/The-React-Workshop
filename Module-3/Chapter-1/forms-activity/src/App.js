@@ -45,7 +45,6 @@ const validate = (values) => {
 class App extends Component {
 
   render() {
-    // And finally, our render method. Nothing too terribly interesting here.
     return (
       <div className="App">
         <Formik

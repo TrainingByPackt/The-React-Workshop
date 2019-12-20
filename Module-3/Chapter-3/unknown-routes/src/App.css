@@ -21,6 +21,16 @@ form{
   padding: 100px;
 }
 
+
+ul {
+  display: inline-flex;
+  list-style-type: none;
+}
+
+ul > li {
+  padding: 0 10px;
+}
+
 label{
   font-family: sans-serif;
   letter-spacing: 6px;
